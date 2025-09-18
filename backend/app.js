@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import dataRouter from "./routers/data.router.js";
 
 const app = express();
 
@@ -20,7 +21,6 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 // serving assets like images , css
 app.use(express.static("public"))
 
-app.use("/api/v1/summary",);
-app.use("/api/v1/visualize",);
+app.use("/api/v1/", dataRouter);
 
 export default app;

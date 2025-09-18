@@ -1,7 +1,7 @@
 import { LineChart } from '@mui/x-charts/LineChart';
 
 interface DataRow {
-    id: number;
+    id: string;
     year: number;
     rainfall: number;
     temperature: number;

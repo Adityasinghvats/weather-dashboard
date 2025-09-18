@@ -1,14 +1,7 @@
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import type { GridColDef } from '@mui/x-data-grid';
-
-interface DataRow {
-    id: number;
-    year: string;
-    rainfall: string;
-    temperature: string;
-    humidity: string;
-}
+import type { DataRow } from '../types/data';
 
 const columns: GridColDef<DataRow>[] = [
     { field: 'id', headerName: 'ID', width: 90 },

@@ -1,6 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dataRouter from "./routers/data.router.js";
+import dotenv from 'dotenv';
+
+dotenv.config({
+    path: './.env'
+})
 
 const app = express();
 

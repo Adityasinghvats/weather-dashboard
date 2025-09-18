@@ -1,9 +1,31 @@
 import { LineChart } from '@mui/x-charts/LineChart';
-import {
-    worldElectricityProduction,
-    keyToLabel,
-    colors,
-} from '../data/electricityproduction';
+
+interface DataRow {
+    id: number;
+    year: number;
+    rainfall: number;
+    temperature: number;
+    humidity: number;
+    [key: string]: string | number;
+}
+
+interface ChartProps {
+    data: DataRow[];
+}
+
+const keyToLabel: { [key: string]: string } = {
+    other: 'Other',
+    rainfall: 'Rainfall (mm/hr)',
+    temperature: 'Temperature (°C)',
+    humidity: 'Humidity (%)',
+};
+
+const colors: { [key: string]: string } = {
+    other: 'lightgray',
+    humidity: 'lightgreen',
+    temperature: 'yellow',
+    rainfall: 'blue',
+};
 
 const stackStrategy = {
     stack: 'total',
@@ -17,7 +39,7 @@ const customize = {
     experimentalFeatures: { preferStrictDomainInLineCharts: true },
 };
 
-export default function LineDataset() {
+export default function LineDataset({ data }: ChartProps) {
     return (
         <LineChart
             xAxis={[
@@ -31,7 +53,7 @@ export default function LineDataset() {
                 showMark: false,
                 ...stackStrategy,
             }))}
-            dataset={worldElectricityProduction}
+            dataset={data}
             {...customize}
         />
     );

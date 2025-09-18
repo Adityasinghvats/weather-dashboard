@@ -1,25 +1,15 @@
 export const keyToLabel: { [key: string]: string } = {
-    coal: 'Electricity from coal (TWh)',
-    gas: 'Electricity from gas (TWh)',
-    oil: 'Electricity from oil (TWh)',
-    nuclear: 'Electricity from nuclear (TWh)',
-    hydro: 'Electricity from hydro (TWh)',
-    wind: 'Electricity from wind (TWh)',
-    solar: 'Electricity from solar (TWh)',
-    bio: 'Electricity from bioenergy (TWh)',
-    other: 'Other renewables excluding bioenergy (TWh)',
+    other: 'Other',
+    rainfall: 'Rainfall (mm/hr)',
+    temperature: 'Temperature (°C)',
+    humidity: 'Humidity (%)',
 };
 
 export const colors: { [key: string]: string } = {
     other: 'lightgray',
-    bio: 'lightgreen',
-    solar: 'yellow',
-    wind: 'lightblue',
-    hydro: 'blue',
-    nuclear: 'orange',
-    oil: 'darkgrey',
-    gas: 'gray',
-    coal: 'black',
+    humidity: 'lightgreen',
+    temperature: 'yellow',
+    rainfall: 'blue',
 };
 
 export const worldElectricityProduction = [

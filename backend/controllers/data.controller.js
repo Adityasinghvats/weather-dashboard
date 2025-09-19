@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 // send json array for visualization
 const getVisualizationData = async (req, res) => {
     try {
-        const visualizationData = await Data.find({});
+        const visualizationData = await Data.find({}).sort({ year: 1 });
         res.status(200).json(
             new ApiResponse(200, visualizationData, "Visualization data fetched successfully")
         )
@@ -16,7 +16,7 @@ const getVisualizationData = async (req, res) => {
     }
 };
 
-// send json array for summary data
+// send json for summary data
 const getSummaryData = async (req, res) => {
     try {
         const weatherData = await Data.find({});

@@ -65,6 +65,14 @@ cd weather-dashboard
 
 ---
 
+## Run the app locally using Docker
+
+1. Simply go the root folder where `compose.yaml` file is located and run the command.
+```bash
+docker compose up -d
+```
+2. Your app will be running at `http://localhost/5173`.
+
 ## Project Structure
 
 ```
@@ -74,3 +82,183 @@ weather-dashboard/
 ```
 
 ---
+
+
+
+## UI State Handling
+
+The dashboard UI provides clear feedback for different data states:
+
+- **Loading State:**
+	- While data is being fetched, a centered spinner animation and a loading message are displayed to inform the user that data is loading.
+- **Error State:**
+	- If an error occurs during data fetching, a user-friendly error message is shown.
+- **Empty State:**
+	- If no data is available, the summary and table sections display 'N/A' or remain empty, ensuring the UI does not break and users are aware that no data is present.
+
+These states ensure a smooth and informative user experience, even when network or backend issues occur.
+
+
+For performance and user experience testing, the following methods were used:
+
+- **Browser-based Network Throttling:**
+	- Used Chrome DevTools to simulate slow 3G/4G networks and test the dashboard's responsiveness and loading times under constrained conditions.
+
+- **Lighthouse Audits:**
+	- Ran Google Lighthouse to check for page performance, accessibility, best practices, and SEO. The dashboard achieved high scores, reflecting fast load times and good user experience.
+
+These results are possible due to the use of React server components and the highly optimized Vite bundler, which ensures efficient code splitting and minimal bundle sizes.
+
+---
+
+- All API ednpoints can found here `backend/routers/data.router.js`.
+- All controllers can found here `backend/controllers/data.controller.js`.
+- Error response configurations and request and response validation can be found
+  - `backend/controllers/data.controller.js` - logic to validate malformed data.
+  - `backend/models/data.model.js` - MongoDB schema makes sure to validate the request and response data.
+	- `backend/utils/ApiError.js` - Custom error class for consistent error handling and HTTP status codes throughout the backend.
+	- `backend/utils/ApiResponse.js` - Standardizes API responses with a common structure for status, data, message, and success flag.
+	- `backend/utils/AsyncHandler.js` - Utility to wrap async route handlers and forward errors to Express error middleware, reducing repetitive try/catch blocks.
+
+- Aggregated Data for summary is being generated using the following code in `backend/controllers/data.controller.js`.
+```javascript
+const getSummaryData = async (req, res) => {
+    try {
+        const weatherData = await Data.find({});
+        const averageTemperature = (weatherData.reduce((sum, record) => sum + parseFloat(record.temperature), 0) / weatherData.length).toFixed(2);
+        const averageHumidity = (weatherData.reduce((sum, record) => sum + parseFloat(record.humidity), 0) / weatherData.length).toFixed(2);
+        const averageRainfall = (weatherData.reduce((sum, record) => sum + parseFloat(record.rainfall), 0) / weatherData.length).toFixed(2);
+        const summaryData = {
+            averageTemperature: parseFloat(averageTemperature),
+            averageHumidity: parseFloat(averageHumidity),
+            averageRainfall: parseFloat(averageRainfall)
+        };
+
+        res.status(200).json(
+            new ApiResponse(200, summaryData, "Summary data fetched successfully")
+        );
+    } catch (error) {
+        console.error("Error fetching summary data:", error);
+        res.status(500).json(
+            new ApiResponse(500, [], "Failed to fetch summary data")
+        );
+    }
+};
+```
+
+- All the data sent and received is in the `JSON` format.
+
+- Frontend components for the Chart and Table are from `MUI` component library and can be found here.
+  - `frontend/src/components`
+
+- For making API calls the frontend used native `fetch` apis for data fetching using error logic and fallback protection. Related code files are available here.
+  - `frontend/src/services/api.ts` && `frontend/src/services/usefetch.ts`
+  - All the data from api endpoints is validated and transformed using Typescript interfaces and validation.
+
+---
+## API DOCS
+- Can be tested using Postman or Hoppscotch, resposne might be delayed in first try, as the backend is serverless.
+### 1. Get Visualization Data
+
+**Endpoint:** `GET https://weather-backend-cu47.onrender.com/api/v1/visualize`
+
+**Description:**
+Returns an array of all weather data records for visualization.
+
+**Response:**
+```
+Status: 200 OK
+{
+	"statusCode": 200,
+	"data": [
+		{
+			"_id": "650f1c...",
+			"year": "2020",
+			"temperature": "25.5",
+			"humidity": "80",
+			"rainfall": "120.5",
+			"createdAt": "2023-09-24T12:34:56.789Z",
+			"updatedAt": "2023-09-24T12:34:56.789Z",
+			"__v": 0
+		},
+		// ...more records
+	],
+	"message": "Visualization data fetched successfully",
+	"success": true
+}
+```
+
+---
+
+### 2. Get Summary Data
+
+**Endpoint:** `GET https://weather-backend-cu47.onrender.com/api/v1/summary`
+
+**Description:**
+Returns average temperature, humidity, and rainfall across all records.
+
+**Response:**
+```
+Status: 200 OK
+{
+	"statusCode": 200,
+	"data": {
+		"averageTemperature": 25.5,
+		"averageHumidity": 80.0,
+		"averageRainfall": 120.5
+	},
+	"message": "Summary data fetched successfully",
+	"success": true
+}
+```
+
+---
+
+### 3. Add Weather Data
+
+**Endpoint:** `POST https://weather-backend-cu47.onrender.com/api/v1/`
+
+**Description:**
+Add a new weather data record.
+
+**Request Body:**
+```
+{
+	"year": "2021",
+	"temperature": "26.1",
+	"humidity": "78",
+	"rainfall": "110.2"
+}
+```
+
+**Response:**
+```
+Status: 201 Created
+{
+	"statusCode": 201,
+	"data": {
+		"_id": "650f1c...",
+		"year": "2021",
+		"temperature": "26.1",
+		"humidity": "78",
+		"rainfall": "110.2",
+		"createdAt": "2023-09-24T12:34:56.789Z",
+		"updatedAt": "2023-09-24T12:34:56.789Z",
+		"__v": 0
+	},
+	"message": "Data added successfully",
+	"success": true
+}
+```
+
+**Error Response (missing fields):**
+```
+Status: 400 Bad Request
+{
+	"statusCode": 400,
+	"data": null,
+	"message": "All fields are required",
+	"success": false
+}
+```
+

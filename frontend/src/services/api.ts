@@ -1,6 +1,6 @@
 import type { DataRow, SummaryData } from "../types/data";
 export const API_CONFIG = {
-    BASE_URL: "https://weather-backend-cu47.onrender.com/api/v1",
+    BASE_URL: "http://localhost:3000/api/v1",
     headers: {
         accept: "application/json",
     },

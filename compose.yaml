@@ -1,0 +1,31 @@
+services:
+  frontend:
+    build:
+      context: frontend
+      target: development
+    ports:
+      - 5173:5173
+    stdin_open: true
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: always
+    networks:
+      - react-express
+    depends_on:
+      - backend
+
+  backend:
+    restart: always
+    build:
+      context: backend
+      target: development
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - react-express
+    ports: 
+      - 3000:3000
+networks:
+  react-express:

@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swagger.js';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 dotenv.config({
     path: './.env'
@@ -34,6 +35,7 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 // serving assets like images , css
 app.use(express.static("public"))
+app.use(errorHandler);
 
 // Swagger docs (dynamic servers based on request)
 app.get('/api-docs.json', (req, res) => {

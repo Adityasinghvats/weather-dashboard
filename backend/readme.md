@@ -14,3 +14,9 @@ npm run test:stress
   - `Capacity Testing`: Identifies the maximum number of concurrent users or transactions the system can handle.
 
 - Test error handling and resilience using fuzzer test
+
+- Setup testing
+```bash
+ npm i -D @babel/core @babel/node @babel/preset-env jest
+ npm init jest@latest 
+```

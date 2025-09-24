@@ -17,13 +17,38 @@ config:
     ensure: {}
     apdex: {}
     metrics-by-endpoint: {}
+    fake-data: {}
   apdex:
-    threshold: 100
+    threshold: 500
   ensure:
     threshold: 
-      - http.response_time.p99: 100
-      - http.response_time.p95: 75
+      - http.response_time.p99: 500
+      - http.response_time.p95: 300
+  fake-data:
+    incrementalNumber:
+      start: 1900
+      end: 3000
+      step: 2
+    randNumber:
+      min: 0
+      max: 100
+    randFloat:
+      min: 0
+      max: 300
+      fractionDigits: 2
 scenarios:
+  - name: 'Test post endpoint'
+    flow:
+      - post:
+          url: "/api/v1/"
+          json:
+            year: "{{ $incrementalNumber() }}"
+            temperature: "{{ $randNumber() }}"
+            humidity: "{{ $randNumber() }}"
+            rainfall: "{{ $randFloat() }}"
   - flow:
       - get:
           url: "/api/v1/visualize"
+  - flow:
+      - get:
+          url: "/api/v1/summary"

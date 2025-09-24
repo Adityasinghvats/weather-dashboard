@@ -124,15 +124,58 @@ These results are possible due to the use of React server components and the hig
 ```javascript
 const getSummaryData = async (req, res) => {
     try {
-        const weatherData = await Data.find({});
-        const averageTemperature = (weatherData.reduce((sum, record) => sum + parseFloat(record.temperature), 0) / weatherData.length).toFixed(2);
-        const averageHumidity = (weatherData.reduce((sum, record) => sum + parseFloat(record.humidity), 0) / weatherData.length).toFixed(2);
-        const averageRainfall = (weatherData.reduce((sum, record) => sum + parseFloat(record.rainfall), 0) / weatherData.length).toFixed(2);
-        const summaryData = {
-            averageTemperature: parseFloat(averageTemperature),
-            averageHumidity: parseFloat(averageHumidity),
-            averageRainfall: parseFloat(averageRainfall)
-        };
+        const [result] = await Data.aggregate([
+            // Cast string fields to numbers, stripping potential unit suffixes
+            {
+                $addFields: {
+                    temperatureNum: {
+                        $toDouble: {
+                            $replaceAll: {
+                                input: { $replaceAll: { input: { $ifNull: ["$temperature", "0"] }, find: "°C", replacement: "" } },
+                                find: " ",
+                                replacement: ""
+                            }
+                        }
+                    },
+                    humidityNum: {
+                        $toDouble: {
+                            $replaceAll: {
+                                input: { $replaceAll: { input: { $ifNull: ["$humidity", "0"] }, find: "%", replacement: "" } },
+                                find: " ",
+                                replacement: ""
+                            }
+                        }
+                    },
+                    rainfallNum: {
+                        $toDouble: {
+                            $replaceAll: {
+                                input: { $replaceAll: { input: { $ifNull: ["$rainfall", "0"] }, find: "mm", replacement: "" } },
+                                find: " ",
+                                replacement: ""
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    averageTemperature: { $avg: "$temperatureNum" },
+                    averageHumidity: { $avg: "$humidityNum" },
+                    averageRainfall: { $avg: "$rainfallNum" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    averageTemperature: { $round: ["$averageTemperature", 2] },
+                    averageHumidity: { $round: ["$averageHumidity", 2] },
+                    averageRainfall: { $round: ["$averageRainfall", 2] }
+                }
+            }
+        ]);
+
+        const summaryData = result || { averageTemperature: 0, averageHumidity: 0, averageRainfall: 0 };
 
         res.status(200).json(
             new ApiResponse(200, summaryData, "Summary data fetched successfully")
@@ -158,6 +201,7 @@ const getSummaryData = async (req, res) => {
 ---
 ## API DOCS
 - Can be tested using Postman or Hoppscotch, resposne might be delayed in first try, as the backend is serverless.
+- Simply run the app and go to the url `http://localhost/api-docs`.
 ### 1. Get Visualization Data
 
 **Endpoint:** `GET https://weather-backend-cu47.onrender.com/api/v1/visualize`

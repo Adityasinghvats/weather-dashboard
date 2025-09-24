@@ -12,3 +12,5 @@ npm run test:stress
   - `Stress Testing`: Determines the system's breaking point by pushing it beyond its limits.
   - `Endurance Testing`: Checks system performance over extended periods to detect memory leaks or degradation.
   - `Capacity Testing`: Identifies the maximum number of concurrent users or transactions the system can handle.
+
+- Test error handling and resilience using fuzzer test

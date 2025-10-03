@@ -12,7 +12,7 @@ RUN npm ci
 COPY . /usr/src/app
 
 ENV PORT=3000
-ENV MONGO_URI=mongodb+srv://aggregate:aggregate@mongoproject.y2aij.mongodb.net
+ENV MONGO_URI=mongodb+srv://<username>:<password>@mongoproject.y2aij.mongodb.net
 ENV CORS_ORIGIN=http://localhost:5173
 
 EXPOSE $PORT

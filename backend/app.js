@@ -6,6 +6,8 @@ import { swaggerSpec } from './swagger.js';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { errorHandler } from "./middlewares/error.middleware.js";
+import observeMiddleware from "./middlewares/observe.middleware.js";
+import { register } from "./observe/promClient.js";
 
 dotenv.config({
     path: './.env'
@@ -36,6 +38,7 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 // serving assets like images , css
 app.use(express.static("public"))
 app.use(errorHandler);
+app.use(observeMiddleware);
 
 // Swagger docs (dynamic servers based on request)
 app.get('/api-docs.json', (req, res) => {
@@ -49,6 +52,12 @@ app.get('/api-docs.json', (req, res) => {
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(undefined, {
     swaggerOptions: { url: '/api-docs.json' }
 }));
+
+// metrics endpoint
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+})
 
 app.use("/api/v1/", dataRouter);
 

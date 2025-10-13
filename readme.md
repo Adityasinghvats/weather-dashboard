@@ -89,6 +89,22 @@ weather-dashboard/
 
 3. Setup monitoring and onbervalbility using Prometheus and Grafana
 
+```bash
+cd backend
+docker compose up -d
+```
+
+- Visualize using Grafana
+  - Grafana will be available at `http://localhost/3001`
+  - Now to add prometheus as the data source go to `Connections/DataSources/`
+  - Choose prometheus and add URL `http://prometheus:9090`.
+  - Test the connection after adding the URL.
+  - Now you can create the dashboard using the queries
+    - up{job="pribex-be"}
+    - process_resident_memory_bytes
+    - process_cpu_user_seconds_total
+    - nodejs_eventloop_lag_seconds
+
 ---
 
 ## UI State Handling

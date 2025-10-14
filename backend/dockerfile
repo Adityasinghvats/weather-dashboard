@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4
 
-FROM node:lts-bookworm-slim AS development
+FROM node:lts-bookworm-slim
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -11,9 +11,6 @@ RUN npm ci
 
 COPY . /usr/src/app
 
-ENV PORT=3000
-ENV CORS_ORIGIN=http://localhost:5173
-
 EXPOSE $PORT
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "start" ]

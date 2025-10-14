@@ -3,6 +3,8 @@ services:
     build:
       context: frontend
       target: development
+    env_file:
+      - ./frontend/.env
     ports:
       - 5173:5173
     stdin_open: true

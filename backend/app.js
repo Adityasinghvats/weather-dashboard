@@ -19,7 +19,9 @@ const app = express();
 app.set('trust proxy', 1);
 
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.NODE_ENV === 'production'
+        ? process.env.CORS_ORIGIN
+        : ['http://localhost', 'http://localhost:5173', 'http://localhost:80'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -29,7 +31,10 @@ app.use(
     cors(corsOptions)
 )
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === 'production',
+    crossOriginEmbedderPolicy: process.env.NODE_ENV === 'production',
+}));
 app.disable('x-powered-by');
 
 app.use(express.json({ limit: "16kb" }));

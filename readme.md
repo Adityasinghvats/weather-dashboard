@@ -74,7 +74,7 @@ cd weather-dashboard
 1. Simply go the root folder where `compose.yaml` file is located and run the command.
 
 ```bash
-docker compose --env-file backend/.env up --build -d
+docker compose up -d
 ```
 
 2. Your app will be running at `http://localhost/5173`.

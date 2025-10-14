@@ -2,6 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { Data } from "../models/data.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/AsyncHandler.js";
+import { connectRedis } from "../config/redis.js";
 
 // send json array for visualization
 const getVisualizationData = asyncHandler(async (req, res) => {
@@ -90,6 +91,11 @@ const addWeatherData = asyncHandler(async (req, res) => {
     try {
         const newData = new Data({ year, temperature, humidity, rainfall });
         await newData.save();
+        const client = await connectRedis();
+        if (client && client.isOpen) {
+            await client.del("cache:/api/v1/visualize"); // Invalidate cache
+            await client.del("cache:/api/v1/summary"); // Invalidate cache
+        }
         return res.status(201).json(new ApiResponse(201, newData, "Data added successfully"));
     } catch (error) {
         console.log("Error adding data:", error?.message);

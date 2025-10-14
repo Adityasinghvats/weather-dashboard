@@ -37,7 +37,6 @@ app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }))
 // serving assets like images , css
 app.use(express.static("public"))
-app.use(errorHandler);
 app.use(observeMiddleware);
 
 // Swagger docs (dynamic servers based on request)
@@ -60,5 +59,6 @@ app.get('/metrics', async (req, res) => {
 })
 
 app.use("/api/v1/", dataRouter);
+app.use(errorHandler);
 
 export default app;

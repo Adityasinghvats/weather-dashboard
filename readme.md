@@ -89,11 +89,6 @@ weather-dashboard/
 
 3. Setup monitoring and onbervalbility using Prometheus and Grafana
 
-```bash
-cd backend
-docker compose up -d
-```
-
 - Visualize using Grafana
   - Grafana will be available at `http://localhost/3001`
   - Now to add prometheus as the data source go to `Connections/DataSources/`

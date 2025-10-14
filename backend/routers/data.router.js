@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getVisualizationData, getSummaryData, addWeatherData } from "../controllers/data.controller.js";
+import cacheMiddleware from "../middlewares/cache.middleware.js";
 
 const router = Router();
 
@@ -15,7 +16,7 @@ const router = Router();
  *       500:
  *         description: Failed to fetch summary data
  */
-router.route("/summary").get(getSummaryData);
+router.route("/summary").get(cacheMiddleware, getSummaryData);
 
 /**
  * @openapi
@@ -29,7 +30,7 @@ router.route("/summary").get(getSummaryData);
  *       500:
  *         description: Failed to fetch visualization data
  */
-router.route("/visualize").get(getVisualizationData);
+router.route("/visualize").get(cacheMiddleware, getVisualizationData);
 
 /**
  * @openapi

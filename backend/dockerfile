@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.4
-
 FROM node:lts-bookworm-slim
 
 # Create app directory
